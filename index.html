@@ -1,0 +1,54 @@
+<html>
+
+<head>
+    <title>Thoughtful Sorter</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+</head>
+
+<script>
+    $(document).ready(function () {
+        $('form').on('submit', function (event) {
+            event.preventDefault();
+            $.ajax({
+                type: 'POST',
+                url: '/sort',
+                data: JSON.stringify({
+                    width: parseFloat($('#width').val()),
+                    height: parseFloat($('#height').val()),
+                    length: parseFloat($('#length').val()),
+                    mass: parseFloat($('#mass').val())
+                }),
+                dataType: 'json',
+                contentType: 'application/json;charset=UTF-8',
+                success: function (response) {
+                    $('#result').text('Category: ' + response.category);
+                },
+                error: function (xhr, status, error) {
+                    obj = JSON.parse(xhr.responseText);
+                    msg = '';
+                    obj["detail"].forEach(element => {
+                        msg += element["msg"] + ".";
+                    });
+                    $('#result').text('Error: ' + msg);
+                }
+            });
+        });
+    });
+</script>
+
+<body>
+    <form action="/sort" method="post">
+        <label for="width">Width:</label><br>
+        <input type="text" id="width" name="width"><br>
+        <label for="height">Height:</label><br>
+        <input type="text" id="height" name="height"><br>
+        <label for="length">Length:</label><br>
+        <input type="text" id="length" name="length"><br>
+        <label for="mass">Mass:</label><br>
+        <input type="text" id="mass" name="mass"><br><br>
+        <input type="submit" value="Submit">
+    </form>
+    <p id="result"></p>
+</body>
+
+</html>
